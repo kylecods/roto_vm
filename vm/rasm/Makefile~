@@ -1,0 +1,6 @@
+lex:
+	lex -t rasm.l >rasm.c
+
+
+install:
+	gcc -o rasmv0.1 rasm.c -Wall -Wextra -g
