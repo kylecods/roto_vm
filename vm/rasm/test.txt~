@@ -1,8 +1,0 @@
-start
-
-push 56
-push 60
-add
-hlt
-
-end
