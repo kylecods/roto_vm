@@ -8,16 +8,18 @@ static int stack[256];
 //instructions
 
 typedef enum{
-  PSH,
+  PSH, //push literal to stack
   ADD,
   POP,
   SUB,
   HLT,
   MUL,
   DIV,
-  MOV,
+  MOV, //move register to register
+  MOV_LIT, // move literal to register
   PRT,
-  PREG
+  PREG, //push register to stack
+  JMP_NOT
 }InstructionSet;
 
 //registers
@@ -31,6 +33,8 @@ typedef enum{
   F,
   SP,
   PC,
+  ACC,
+  FP,
   NUM_REGS
 }Registers;
 
@@ -50,6 +54,8 @@ static bool running = true;
 #define PC (registers[PC])
 /*stack pointer*/
 #define SP (registers[SP])
+
+#define FP (resisters[FP])
 
 
 
@@ -80,12 +86,14 @@ void eval(int instr){
      SP = SP - 1;
      
      registers[B] = stack[SP];
+     SP = SP - 1;
      
-     registers[C] = registers[B] + registers[A];
+     registers[ACC] = registers[B] + registers[A];
+	SP = SP + 1;
 
-     stack[SP] = registers[C];
+     stack[SP] = registers[ACC];
      
-     printf("%d + %d = %d\n", registers[B], registers[A], registers[C]);
+     printf("%d + %d = %d\n", registers[B], registers[A], registers[ACC]);
      break;
    }
      case MUL:{
@@ -94,11 +102,11 @@ void eval(int instr){
      
      registers[B] = stack[SP];
      
-     registers[C] = registers[B] * registers[A];
+     registers[ACC] = registers[B] * registers[A];
 
-     stack[SP] = registers[C];
+     stack[SP] = registers[ACC];
      
-     printf("%d * %d = %d\n", registers[B], registers[A], registers[C]);
+     printf("%d * %d = %d\n", registers[B], registers[A], registers[ACC]);
      break;
    }
    case DIV:{
@@ -107,11 +115,11 @@ void eval(int instr){
      
      registers[B] = stack[SP];
      
-     registers[C] = registers[B] / registers[A];
+     registers[ACC] = registers[B] / registers[A];
 
-     stack[SP] = registers[C];
+     stack[SP] = registers[ACC];
      
-     printf("%d / %d = %d\n", registers[B], registers[A], registers[C]);
+     printf("%d / %d = %d\n", registers[B], registers[A], registers[ACC]);
      break;
    }
     case SUB:{
@@ -120,15 +128,20 @@ void eval(int instr){
      
      registers[B] = stack[SP];
      
-     registers[C] = registers[B] - registers[A];
+     registers[ACC] = registers[B] - registers[A];
 
-     stack[SP] = registers[C];
+     stack[SP] = registers[ACC];
      
-     printf("%d - %d = %d\n", registers[B], registers[A], registers[C]);
+     printf("%d - %d = %d\n", registers[B], registers[A], registers[ACC]);
      break;
    }
    case MOV: {
      registers[program[PC+2]] = registers[program[PC + 1]];
+     PC = PC + 2;
+     break;
+   }
+   case MOV_LIT:{
+     registers[program[PC+2]] = program[PC+1];
      PC = PC + 2;
      break;
    }
@@ -137,12 +150,20 @@ void eval(int instr){
      PC = PC + 1;
      break;
    }
-   case PREG:{
+   case PREG: {
      SP = SP + 1;
      PC = PC + 1;
      stack[SP] = registers[program[PC]];
      break;
    }
+  case JMP_NOT:
+    if(program[PC+2] != registers[ACC]){
+      PC = program[PC+3];
+      
+    }else{
+      PC = PC + 3;
+    }
+    break;
   }
   
 }

@@ -90,12 +90,12 @@ int main(int argc, char** argv){
 	}
 	printf("Number of tokens %d\n\n",Token.no);
         fclose(newout);
-	FILE *yout = fopen("test.ras", "wb");
+	FILE *yout = fopen("test.bin", "wb");
 	
 	fwrite(&var,sizeof(var),1,yout);
 	fclose(yout);
 
-		FILE *yin = fopen("test.ras", "rb");
+		FILE *yin = fopen("test.bin", "rb");
 		while(fread(&var,sizeof(var),1,yin) > 0){
 		  for(int z = 0; z < 7; z++){
 	           printf("fileval %d\n",var[z]);
