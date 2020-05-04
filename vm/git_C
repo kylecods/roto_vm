@@ -1,4 +1,0 @@
-git checkout -b <branch_name>
-# move to master.
-
-git checkout <branch_name> master
