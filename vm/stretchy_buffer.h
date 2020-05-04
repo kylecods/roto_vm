@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include "lex.h"
-
-
 /*
 *Stretchy buffer
 *Sean Barrett's work
@@ -53,65 +49,6 @@ static void * stb__sbgrowf(void *arr, int increment, int itemsize)
    }
 }
 #endif // STB_STRETCHY_BUFFER_H_INCLUDED
-#define in_expr_start(t) \
-(t==PSH   || t==ADD    || t==SUB    || \
-  t==POP  || t==HLT    || t==MUL    || \
-  t==DIV  || t==MOV    || t==PRT    || \
-   t==PREG || t==INTEGER)
 
 
 
-
-extern Token_type Token;
-extern int mapping(Token_type inst);
-FILE *yxin;
-int *var = NULL;
-int num;
-int main(int argc, char** argv){
-  //yxin = fopen(argv[1], "r");
-	start_lexer(argv[1]);
-	int i = 0;
-	FILE *newout = fopen(argv[2],"w");
-	//printf("Number of tokens %d\n\n",Token.instruction);
-	while(1){
-	  if(Token.instruction == START){
-	    next_token();
-	  }
-	  if(Token.instruction == END){
-	    break;
-	  }
-	  if(Token.instruction == INTEGER){
-	    
-	      sb_push(var, mapping(Token));
-	      printf("%d\n", var[i]);
-	      fprintf(newout, " %d", var[i]);
-	      next_token();
-	      i++;
-	  }else{
-	    sb_push(var, mapping(Token));
-	    printf("%d\n", var[i]);
-     	    fprintf(newout, "\n%d ", var[i]);
-	    next_token();
-	    i++;
-	  }
-	}
-	printf("Number of tokens %d\n\n",Token.no);
-        fclose(newout);
-	FILE *yout = fopen("test.bin", "wb");
-	
-	fwrite(&var,sizeof(var),1,yout);
-	fclose(yout);
-
-		FILE *yin = fopen("test.bin", "rb");
-		while(fread(&var,sizeof(var),1,yin) > 0){
-		  for(int z = 0; z < 7; z++){
-	           printf("fileval %d\n",var[z]);
-		   
-		}
-		}
-                 
-		
-		fclose(yin);
-	sb_free(var);
-	return 0;
-}
